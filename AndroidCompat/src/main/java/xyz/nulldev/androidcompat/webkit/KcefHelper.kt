@@ -19,16 +19,17 @@ import kotlin.random.Random
 private val logger = KotlinLogging.logger {}
 private val jsHandler: MutableMap<CefClient, JsHandler> = Collections.synchronizedMap(WeakHashMap())
 
-fun CefBrowser.evaluateJavaScript(
-    expression: String,
-    cb: (String?) -> Unit,
-) = evaluateJavaScriptAsJson(expression) { cb(JsHandler.plainValue(it)) }
-
 // Passes the result serialized as JSON, like Android's WebView.evaluateJavascript
-fun CefBrowser.evaluateJavaScriptAsJson(
+fun CefBrowser.evaluateJavaScript(
     expression: String,
     cb: (String) -> Unit,
 ) = jsHandler[this.client]!!.eval(this, expression, cb)
+
+// Passes the result decoded from JSON: a string arrives unquoted and null as null
+fun CefBrowser.evaluateJavaScriptDecoded(
+    expression: String,
+    cb: (String?) -> Unit,
+) = evaluateJavaScript(expression) { cb(JsHandler.plainValue(it)) }
 
 fun CefBrowser.dispose() {
     stopLoad()

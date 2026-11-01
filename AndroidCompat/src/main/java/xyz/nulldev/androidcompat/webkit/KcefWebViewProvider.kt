@@ -740,7 +740,7 @@ class KcefWebViewProvider(
         script: String,
         resultCallback: ValueCallback<String>?,
     ) {
-        browser!!.evaluateJavaScriptAsJson(
+        browser!!.evaluateJavaScript(
             script.removePrefix("javascript:"),
         )
             {
